@@ -27,28 +27,30 @@ def clear():
 	print("\033[H\033[J", end='');
 
 
-def save(filename, text_list):
+def save(filename, text_list, original_text):
 	text_str = ""
 	for s in text_list:
 		text_str += s + '\n'
-	w, h = terminal_size()
-	gotoxy(1,h-2);
-	for i in range(w):
-		print('\033[30;47m \033[0m', end='')
+	if text_str != original_text+'\n':
+		w, h = terminal_size()
+		gotoxy(1,h-2);
+		for i in range(w):
+			print('\033[30;47m \033[0m', end='')
+		
+		gotoxy(1,h-2);
+		command = input("\033[30;47mSave file?[Y/n] ")
+		if command == '' or command.lower()[0] == 'y':
+			if filename == "untitled":
+				for i in range(w):
+					print('\033[30;47m \033[0m', end='')
+				
+				gotoxy(1,h-2);
+				filename = input("\033[30;47mSave as: ")
+				
+			with open(filename, 'w') as f:
+				f.write(text_str[:-1])
+		print("\033[0m")
 	
-	gotoxy(1,h-2);
-	command = input("\033[30;47mSave file?[Y/n] ")
-	if command == '' or command.lower()[0] == 'y':
-		if filename == "untitled":
-			for i in range(w):
-				print('\033[30;47m \033[0m', end='')
-			
-			gotoxy(1,h-2);
-			filename = input("\033[30;47mSave as: ")
-			
-		with open(filename, 'w') as f:
-			f.write(text_str)
-	print("\033[0m")
 text_str = ""
 
 script_name = os.path.basename(__file__)
@@ -115,7 +117,7 @@ try:
 		
 		gotoxy(1,h-FOOTER_SIZE);
 		
-		print("\033[30;47m3-ESC: escape. ^S- save\033[0m");
+		print("\033[30;47m3-ESC: escape; DEL: quick escape; ^S- save\033[0m"[:w+len('\033[30;47m\033[0m')]);
 		
 		gotoxy(cursor.x+1, cursor.y+HEADER_SIZE-starting_line)
 		
@@ -143,6 +145,7 @@ try:
 				else:
 					cursor.x = 0
 			else:
+				save(filename, text, text_str)
 				break
 		elif c == '\n' or c == '\r':
 			nl_text = text[cursor.y][:cursor.x]
@@ -151,7 +154,7 @@ try:
 			cursor.y+=1
 			cursor.x=0 
 		elif ord(c) == 19:
-			save(filename, text)
+			save(filename, text, text_str)
 		elif ord(c) == 127:	     
 			if cursor.x == 0 and cursor.y > 0:
 				line_text = text[cursor.y][:]
@@ -159,7 +162,7 @@ try:
 				cursor.y -= 1
 				cursor.x = len(text[cursor.y])
 				text[cursor.y] += line_text
-			elif cursor.x and cursor.y <= 0:
+			elif cursor.x == 0 and cursor.y <= 0:
 				pass
 			else:
 				text[cursor.y] = text[cursor.y][:cursor.x-1] + text[cursor.y][cursor.x:]
