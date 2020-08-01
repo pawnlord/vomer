@@ -55,6 +55,8 @@ class Coord:
 	def __init__(self, x, y):
 		self.x = x
 		self.y = y
+for i in range(len(text)):
+	text[i] = text[i].replace('\t',  '        ')
 
 cursor = Coord(0, 0)
 
@@ -64,12 +66,14 @@ start_buff()
 starting_line = 0
 
 ending_line = h
+cursor_offset = 0
 
 try:
 	while True:
 		clear()
 		gotoxy(1,2);
 		
+		cursor_offset = 0
 		w, h = terminal_size()
 		ending_line = starting_line+h-3
 		
@@ -79,7 +83,7 @@ try:
 		for s in range(starting_line, min(len(text), ending_line)):
 			print(text[s])
 		
-		gotoxy(cursor.x+1, cursor.y+3)
+		gotoxy(cursor.x+1, cursor.y+3-starting_line)
 		
 		c = getch()
 		if ord(c) == 27:
@@ -91,6 +95,8 @@ try:
 			elif c == 'B':
 				if cursor.y < len(text)-1:		
 					cursor.y+=1
+					if cursor.x > len(text[cursor.y])-1:
+						cursor.x = len(text[cursor.y])
 				else:
 					cursor.x = len(text[cursor.y])-1
 			elif c == 'D':
@@ -98,6 +104,8 @@ try:
 			elif c == 'A':
 				if cursor.y > 0:		
 					cursor.y-=1
+					if cursor.x > len(text[cursor.y])-1:
+						cursor.x = len(text[cursor.y])
 				else:
 					cursor.x = 0
 			else:
@@ -127,14 +135,20 @@ try:
 				cursor.x=0
 				cursor.y+=1
 			else:
-				cursor.x = len(text[cursor.y])-1
+				cursor.x = len(text[cursor.y])
 			
 		if cursor.x < 0:
 			if cursor.y > 0:
 				cursor.y-=1
-				cursor.x=len(text[cursor.y])-1
+				cursor.x=len(text[cursor.y])
 			else:
 				cursor.x = 0
+		if cursor.y > ending_line:
+			starting_line+=1
+			ending_line+=1
+		if cursor.y < starting_line:
+			starting_line-=1
+			ending_line-=1
 			
 				
 except KeyboardInterrupt:
