@@ -17,7 +17,7 @@ def end_buff():
 	print("\033[?1049l", end='');
 
 def gotoxy(x, y):
-	print("\033[" + str(y) + ";" + str(x) + "H", end='');
+	print("\033[" + str(y) + ";" + str(x) + "H", end='', flush=True);
 
 def terminal_size():
 	h, w, hp, wp = struct.unpack('HHHH', fcntl.ioctl(0, termios.TIOCGWINSZ, struct.pack('HHHH',0,0,0,0)))
@@ -41,11 +41,15 @@ for i in range(len(sys.argv)):
 			i+=1;
 			filename = sys.argv[i]
 if filename != "untitled":
-	f = open(filename)
-	text_str = f.read()
-	f.close()
-	
+	try:
+		f = open(filename)
+		text_str = f.read()
+		f.close()
+	except Exception:
+		pass
 text = text_str.split('\n')
+if text == []:
+	text.append("");
 
 class Coord:
 	def __init__(self, x, y):
@@ -72,7 +76,7 @@ try:
 		for i in range(w):
 			print('\033[31;47m-\033[0m', end='')
 		
-		for s in range(starting_line, ending_line):
+		for s in range(starting_line, min(len(text), ending_line)):
 			print(text[s])
 		
 		gotoxy(cursor.x+1, cursor.y+3)
@@ -84,6 +88,18 @@ try:
 			print(c)
 			if c == 'C':
 				cursor.x+=1
+			elif c == 'B':
+				if cursor.y < len(text)-1:		
+					cursor.y+=1
+				else:
+					cursor.x = len(text[cursor.y])-1
+			elif c == 'D':
+				cursor.x-=1
+			elif c == 'A':
+				if cursor.y > 0:		
+					cursor.y-=1
+				else:
+					cursor.x = 0
 			else:
 				break
 		else:
@@ -96,6 +112,14 @@ try:
 				cursor.y+=1
 			else:
 				cursor.x = len(text[cursor.y])-1
+			
+		if cursor.x < 0:
+			if cursor.y > 0:
+				cursor.y-=1
+				cursor.x=len(text[cursor.y])-1
+			else:
+				cursor.x = 0
+			
 				
 except KeyboardInterrupt:
 	pass
