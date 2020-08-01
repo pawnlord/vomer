@@ -108,6 +108,16 @@ try:
 			text.insert(cursor.y, nl_text)
 			cursor.y+=1
 			cursor.x=0 
+		elif ord(c) == 127:
+			if cursor.x == 0 and cursor.y != 0:
+				line_text = text[cursor.y][:]
+				text = text[:cursor.y] + text[cursor.y+1:]
+				cursor.y -= 1
+				cursor.x = len(text[cursor.y])
+				text[cursor.y] += line_text
+			else:
+				text[cursor.y] = text[cursor.y][:cursor.x-1] + text[cursor.y][cursor.x:]
+				cursor.x-=1
 		else:
 			text[cursor.y] = text[cursor.y][:cursor.x]+c+text[cursor.y][cursor.x:]
 			cursor.x+=1
