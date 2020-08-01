@@ -1,4 +1,5 @@
 import termfuncs as tf
+from constants import *
 
 def save(filename, text_list, original_text, defaultname="untitled"):
 	text_str = ""
@@ -6,18 +7,19 @@ def save(filename, text_list, original_text, defaultname="untitled"):
 		text_str += s + '\n'
 	if text_str != original_text+'\n':
 		w, h = tf.terminal_size()
-		tf.gotoxy(1,h-2);
+		tf.gotoxy(1,h-FOOTER_Y);
 		for i in range(w):
 			print('\033[30;47m \033[0m', end='')
 		
-		tf.gotoxy(1,h-2);
+		tf.gotoxy(1,h-FOOTER_Y);
 		command = input("\033[30;47mSave file?[Y/n] ")
 		if command == '' or command.lower()[0] == 'y':
 			if filename == defaultname:
+				tf.gotoxy(1,h-FOOTER_Y);
 				for i in range(w):
 					print('\033[30;47m \033[0m', end='')
 				
-				tf.gotoxy(1,h-2);
+				tf.gotoxy(1,h-FOOTER_Y);
 				filename = input("\033[30;47mSave as: ")
 				
 			with open(filename, 'w') as f: 
