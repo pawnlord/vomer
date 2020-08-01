@@ -1,5 +1,11 @@
 import fcntl, termios, struct, tty, sys
 
+
+class Coord:
+	def __init__(self, x, y):
+		self.x = x
+		self.y = y
+		
 def getch():
         fd = sys.stdin.fileno()
         old_settings = termios.tcgetattr(fd)
