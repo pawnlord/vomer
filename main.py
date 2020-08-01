@@ -102,6 +102,12 @@ try:
 					cursor.x = 0
 			else:
 				break
+		elif c == '\n' or c == '\r':
+			nl_text = text[cursor.y][:cursor.x]
+			text[cursor.y] = text[cursor.y][cursor.x:]
+			text.insert(cursor.y, nl_text)
+			cursor.y+=1
+			cursor.x=0 
 		else:
 			text[cursor.y] = text[cursor.y][:cursor.x]+c+text[cursor.y][cursor.x:]
 			cursor.x+=1
