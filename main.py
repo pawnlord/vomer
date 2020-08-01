@@ -90,6 +90,23 @@ try:
 			cursor.x=0 
 		elif ord(c) == 19:
 			text_str = fm.save(filename, text, text_str)
+		elif ord(c) == 6:
+			tf.gotoxy(1,h-FOOTER_SIZE);
+			for i in range(w):
+				print('\033[30;47m \033[0m', end='')
+			
+			tf.gotoxy(1,h-FOOTER_SIZE);
+			find_text = input('\033[30;47mFind: \033[0m')
+			for i in range(len(text)):
+				if find_text in text[(1+i+cursor.y)%len(text)]:
+					cursor.y = (1+i+cursor.y)%len(text)
+					break
+			while cursor.y > ending_line:
+				starting_line+=1
+				ending_line+=1
+			while cursor.y < starting_line:
+				starting_line-=1
+				ending_line-=1
 		elif c == '\t':
 			text[cursor.y] = text[cursor.y][:cursor.x]+'        '+text[cursor.y][cursor.x:]
 			cursor.x+=8
