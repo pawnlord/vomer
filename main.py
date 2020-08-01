@@ -1,38 +1,12 @@
 import sys, os
-import fcntl, termios, struct
-import tty, termios
-def getch():
-        fd = sys.stdin.fileno()
-        old_settings = termios.tcgetattr(fd)
-        try:
-            tty.setraw(sys.stdin.fileno())
-            ch = sys.stdin.read(1)
-        finally:
-            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-        return ch
-
-def start_buff():
-	print("\033[?1049h\033[H", end='');
-def end_buff():
-	print("\033[?1049l", end='');
-
-def gotoxy(x, y):
-	print("\033[" + str(y) + ";" + str(x) + "H", end='', flush=True);
-
-def terminal_size():
-	h, w, hp, wp = struct.unpack('HHHH', fcntl.ioctl(0, termios.TIOCGWINSZ, struct.pack('HHHH',0,0,0,0)))
-	return w, h
-	
-def clear():
-	print("\033[H\033[J", end='');
-
+import termfuncs as tf
 
 def save(filename, text_list, original_text):
 	text_str = ""
 	for s in text_list:
 		text_str += s + '\n'
 	if text_str != original_text+'\n':
-		w, h = terminal_size()
+		w, h = tf.terminal_size()
 		gotoxy(1,h-2);
 		for i in range(w):
 			print('\033[30;47m \033[0m', end='')
@@ -47,9 +21,11 @@ def save(filename, text_list, original_text):
 				gotoxy(1,h-2);
 				filename = input("\033[30;47mSave as: ")
 				
-			with open(filename, 'w') as f:
+			with open(filename, 'w') as f: 
 				f.write(text_str[:-1])
+				original_text = text_str[:-1]
 		print("\033[0m")
+	return original_text
 	
 text_str = ""
 
@@ -83,7 +59,7 @@ for i in range(len(text)):
 cursor = Coord(0, 0)
 
 w, h = (0, 0)
-start_buff()
+tf.start_buff()
 
 starting_line = 0
 
@@ -96,13 +72,13 @@ FOOTER_SIZE = 2
 
 try:
 	while True:
-		clear()
-		gotoxy(1,1);
+		tf.clear()
+		tf.gotoxy(1,1);
 		print("Vomer IDE - by pawnlord - " + filename)
-		gotoxy(1,2);
+		tf.gotoxy(1,2);
 		
 		cursor_offset = 0
-		w, h = terminal_size()
+		w, h = tf.terminal_size()
 		ending_line = starting_line+h-HEADER_FOOTER_SIZE
 		
 		for i in range(w):
@@ -111,20 +87,20 @@ try:
 		for s in range(starting_line, min(len(text), ending_line)):
 			print(text[s])
 		
-		gotoxy(1,h-FOOTER_SIZE);
+		tf.gotoxy(1,h-FOOTER_SIZE);
 		for i in range(w):
 			print('\033[30;47m \033[0m', end='')
 		
-		gotoxy(1,h-FOOTER_SIZE);
+		tf.gotoxy(1,h-FOOTER_SIZE);
 		
 		print("\033[30;47m3-ESC: escape; DEL: quick escape; ^S- save\033[0m"[:w+len('\033[30;47m\033[0m')]);
 		
-		gotoxy(cursor.x+1, cursor.y+HEADER_SIZE-starting_line)
+		tf.gotoxy(cursor.x+1, cursor.y+HEADER_SIZE-starting_line)
 		
-		c = getch()
+		c = tf.getch()
 		if ord(c) == 27:
-			c = getch()
-			c = getch()
+			c = tf.getch()
+			c = tf.getch()
 			print(c)
 			if c == 'C':
 				cursor.x+=1
@@ -154,7 +130,7 @@ try:
 			cursor.y+=1
 			cursor.x=0 
 		elif ord(c) == 19:
-			save(filename, text, text_str)
+			text_str = save(filename, text, text_str)
 		elif ord(c) == 127:	     
 			if cursor.x == 0 and cursor.y > 0:
 				line_text = text[cursor.y][:]
@@ -195,5 +171,5 @@ try:
 except KeyboardInterrupt:
 	pass
 
-end_buff()
+tf.end_buff()
 
