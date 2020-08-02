@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 import sys, os
-import termfuncs as tf
-import filemanager as fm
-from constants import *
+import utils.filemanager as fm
+import utils.termfuncs as tf
+from constants.constants import *
 
 	
 text_str = ""

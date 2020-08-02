@@ -1,5 +1,5 @@
-import termfuncs as tf
-from constants import *
+import utils.termfuncs as tf
+from constants.constants import *
 
 def save(filename, text_list, original_text, defaultname="untitled"):
 	text_str = ""
