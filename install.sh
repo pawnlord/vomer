@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # set a link to main.py
-sudo ln -s $PWD/main.py /usr/local/bin/vomer
+sudo ln -sf $PWD/vomer.py /usr/local/bin/vomer
 
 # make main.py an executable
-chmod +x main.py
+chmod +x vomer.py
