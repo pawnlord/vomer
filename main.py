@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import sys, os
 import termfuncs as tf
 import filemanager as fm
