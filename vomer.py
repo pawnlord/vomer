@@ -82,8 +82,9 @@ try:
 				else:
 					cursor.x = 0
 			else:
-				fm.save(filename, text, text_str)
-				break
+				_, exit = fm.save(filename, text, text_str, exiting=True)
+				if exit:
+					break
 		elif c == '\n' or c == '\r':
 			nl_text = text[cursor.y][:cursor.x]
 			text[cursor.y] = text[cursor.y][cursor.x:]
@@ -91,7 +92,7 @@ try:
 			cursor.y+=1
 			cursor.x=0 
 		elif ord(c) == 19:
-			text_str = fm.save(filename, text, text_str)
+			text_str, _ = fm.save(filename, text, text_str)
 		elif ord(c) == 6:
 			tf.gotoxy(1,h-FOOTER_SIZE);
 			for i in range(w):
