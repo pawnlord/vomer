@@ -35,7 +35,7 @@ try:
 	while True:
 		tf.clear()
 		tf.gotoxy(1,1);
-		print("Vomer IDE - by pawnlord - " + filename)
+		print("Vomer - by pawnlord - " + filename)
 		tf.gotoxy(1,HEADER_SEPARATOR_Y);
 		
 		cursor_offset = 0
@@ -46,7 +46,7 @@ try:
 			print('\033[30;47m-\033[0m', end='')
 		
 		for s in range(starting_line, min(len(text), ending_line)):
-			print(text[s])
+			print(text[s] + ' ', end='\n')
 		
 		tf.gotoxy(1,h-FOOTER_SIZE);
 		for i in range(w):
