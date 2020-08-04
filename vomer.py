@@ -45,8 +45,13 @@ try:
 		for i in range(w):
 			print('\033[30;47m-\033[0m', end='')
 		
+		# fix for bug
+		# without this, a blank line would print a newline that ends up 
+		# where a normal line would print
+		print()
+		
 		for s in range(starting_line, min(len(text), ending_line)):
-			print(text[s] + ' ', end='\n')
+			print(text[s], end='\n')
 		
 		tf.gotoxy(1,h-FOOTER_SIZE);
 		for i in range(w):
